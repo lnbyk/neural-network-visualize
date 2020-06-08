@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    justify-content: space-between;
+    
+}
+.aaaa {
+    background-color : blueviolet;
+    border-radius: 20px;
+    height: 100vh;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-content: space-around;
+}
+
+#createNNW{
+    z-index: 2;
+    position: absolute !important;
+    right: 5%;
+    top: 5%;
+}
+#nnwTraining {
+    flex-direction: column;
+    display: flex;
+    z-index: 2;
+    position: absolute !important;
+    right: 10%;
+    top: 12%;
+}
