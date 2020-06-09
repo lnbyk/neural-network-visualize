@@ -50,7 +50,6 @@ export default function FormDialog(props) {
             label="LayerSize"
             type="email"
             onChange={changeLayerSizes}
-            fullWidth
           />
         </DialogContent>
         <DialogActions>
