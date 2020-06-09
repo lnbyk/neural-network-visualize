@@ -44,7 +44,7 @@ export default class model {
                 }
                 //alert(sum);
                 this.output[layer][neuron] = this.sigmoid(sum);
-                console.log(this.sigmoid(sum));
+                //console.log(this.sigmoid(sum));
             }
             
         }
