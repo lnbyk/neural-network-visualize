@@ -31,8 +31,8 @@ export default function FormDialog(props) {
   };
 
   return (
-    <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+    <div style={{width:'100%'}}>
+      <Button variant="outlined" color="primary" style={{backgroundColor:'#bb86fc', color: 'black', borderRadius:'20px', width:'80%', left:'10%'}} onClick={handleClickOpen}>
         {props.modalName}
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">

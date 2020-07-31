@@ -8,8 +8,9 @@ export default class TrainSet {
     }
 
     addData(input, expected) {
-        if (input.length !== this.inputSize || expected.length !== this.outputSize)
-            return;
+        //alert(input);
+       // if (input.length !== this.inputSize || expected.length !== this.outputSize)
+            //return;
         var tmp = [];
         tmp.push(input);
         tmp.push(expected);

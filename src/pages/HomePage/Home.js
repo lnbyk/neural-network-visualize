@@ -5,7 +5,7 @@ import Perceptron from '../../components/popUpNNW/perceptron/Perceptron';
 export default class Home extends React.Component {
 
     render() {
-        return <div className="container">
+        return <div className="home-container">
             <h2>Home</h2>
             <Link to="/nnw" >nnw</Link> 
         </div>
