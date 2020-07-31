@@ -11,7 +11,7 @@ return(
 
   <BrowserRouter>
     <div>
-      <Route exact path="/" component={Home} />
+      <Route exact path="/" component={NNW} />
       <Route exact path="/nnw" component={NNW} />
     </div>
   </BrowserRouter>
