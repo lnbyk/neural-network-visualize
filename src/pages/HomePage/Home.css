@@ -1,7 +1,8 @@
-.container{
+.home-container{
     height: 100vh; /* Magic here */
     justify-content: center;
     align-items: center;
     background-color: aquamarine;
     display: flex;
+    flex-direction: column;
 }
