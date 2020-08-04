@@ -22,6 +22,8 @@ export default class NNW extends Component {
       linePos: [],
       weights: [],
       showWeights: true,
+      graph: "",
+      data: "none",
     };
   }
 
@@ -75,7 +77,7 @@ export default class NNW extends Component {
   }
 
   hideWeights() {
-      this.setState({showWeights: !this.state.showWeights});
+    this.setState({ showWeights: !this.state.showWeights });
   }
   // use to train the neural net work
   train() {
@@ -106,9 +108,9 @@ export default class NNW extends Component {
     myNNW.train1(ts, 1000, 1);
     //alert(myNNW.weights);
     myNNW.weights.forEach((val, i) => {
-        if (i !== 0)
+      if (i !== 0)
         val.forEach((cc) => {
-          cc.forEach(ccc => {
+          cc.forEach((ccc) => {
             this.state.weights.push(ccc);
           });
         });
@@ -143,8 +145,22 @@ export default class NNW extends Component {
             modalName="Input Data"
             LayerSizes={this.splitTrainingData}
           ></FormDialog>
+          <Button
+            className="change-display"
+            onClick={() => {
+              if (this.state.graph === "")
+                this.setState({ graph: "none", data: "" });
+              else this.setState({ graph: "", data: "none" });
+            }}
+          >
+            {this.state.graph === "none" ? (
+              <text>Change To Graph</text>
+            ) : (
+              <text>Change To Data</text>
+            )}
+          </Button>
         </div>
-        <div className="container">
+        <div className="container" style={{ display: this.state.graph }}>
           {this.state.layerSizes.map((val, index) => {
             return (
               <div key={index + "layer"} className="aaaa">
@@ -168,54 +184,104 @@ export default class NNW extends Component {
             }
           })}
         </div>
+        <div
+          className="container"
+          style={{
+            display: this.state.data,
+            color: "white",
+            justifyContent: "left",
+            paddingLeft: "30px",
+            flexDirection: 'row',
+            alignItems:'flex-start',
+          }}
+        >
+          <div style={{ textAlign: "left", alignItems: "left" , width:'50%'}}>
+            <h1>Neural Network Format:</h1>
+            {this.state.layerSizes.map((val, index) => {
+              return (
+                <pre>
+                  <text>
+                    {`          layer ${index + 1} size : ${val}`} <br />
+                  </text>
+                </pre>
+              );
+            })}
+            <h1>Input Data</h1>
+            {this.state.inputdata.length === 0 ? (
+              <text>You did not enter any data yet</text>
+            ) : (
+              this.state.inputdata.map((val, index) => {
+                return (
+                 <pre>
+                  <text>
+                    {`          ${
+                      index + 1
+                    }. Input: ${val.toString()}  Output: ${this.state.outputData[
+                      index
+                    ].toString()}`}
+                    <br />
+                  </text>
+                  </pre>
+                );
+              })
+            )}
+          </div>
+
+          <div style={{ textAlign: "top-left", alignItems: "top-left" ,  verticalAlign: 'top'}}>
+            <h1>Weights: </h1>
+            {this.state.weights.toString()}
+            <h1>Bias:</h1>
+          </div>
+        </div>
         <div className="lineDiv">
           <svg id="aaaaaaa" position="absolute" height="100%" width="100%">
             {this.state.linePos.map((val) => {
               //alert('aaaaaa');
               return (
                 <line
+                  position="absolute"
                   x1={parseInt(val[0])}
                   y1={val[1]}
                   x2={val[2]}
                   y2={val[3]}
                   stroke="#bb86fc"
                   strokeWidth="2"
-                  style={{ transform: "transLateY(2%)" }}
+                  style={{ transform: "transLateY(2%)", position: "absolute" }}
                 />
               );
             })}
           </svg>
 
-          {this.state.showWeights ? 
-          <div id="aaaaaaa" position="absolute" height="100%" width="100%">
-            {this.state.weights.map((cc, index) => {
-              var val = this.state.linePos[index];
-             
-              //alert('aaaaaa');
-              var curX = (parseInt(val[2]) - val[0])  / 3  + val[0];
+          {this.state.showWeights ? (
+            <div id="aaaaaaa" position="absolute" height="100%" width="100%">
+              {this.state.weights.map((cc, index) => {
+                var val = this.state.linePos[index];
 
-              var k = (val[3] - val[1]) / (val[2] - val[0]);
-              var b = (val[1] - k * val[0]);
-              var curY = curX * k + b;
-                    
-             // alert(curY);
-              return (
-                <div
-                  style={{
-                    position: "absolute",
-                    color: "red",
-                    left: curX,
-                    top: curY,
-                    textAlign: 'center',
-                    alignItems:'center',
-                  }}
-                >
-                  <b>{cc.toFixed(4)}
-                      </b>
-                </div>
-              );
-            })}
-          </div> : null }
+                //alert('aaaaaa');
+                var curX = (parseInt(val[2]) - val[0]) / 3 + val[0];
+
+                var k = (val[3] - val[1]) / (val[2] - val[0]);
+                var b = val[1] - k * val[0];
+                var curY = curX * k + b;
+
+                // alert(curY);
+                return (
+                  <div
+                    style={{
+                      position: "absolute",
+                      color: "red",
+                      left: curX,
+                      top: curY,
+                      textAlign: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <b>{cc.toFixed(4)}</b>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </React.Fragment>
     );
