@@ -16,7 +16,7 @@ export default class Perceptron extends React.Component {
         super(props);
         this.state = {
             isOpen: false,
-            inputValue: 0,
+            inputValue: 0 || props.input,
         }
     }
 

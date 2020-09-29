@@ -15,12 +15,14 @@ export default class NNW extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      nnwLength: 0,
       layerSizes: [],
       inputdata: [],
       outputData: [],
       layers: [],
       linePos: [],
       weights: [],
+      bias: [],
       showWeights: true,
       graph: "",
       data: "none",
@@ -29,7 +31,7 @@ export default class NNW extends Component {
 
   inputLayerSizes = (v) => {
     const layerSize = v.split(",");
-    this.setState({ layerSizes: layerSize });
+    this.setState({ layerSizes: layerSize , nnwLength: layerSize.length});
     myNNW = new model(layerSize);
     ts = new TrainSet(layerSize[0], layerSize[layerSize.length - 1]);
     //alert(myNNW.NETWORK_LAYER_SIZES);
@@ -115,6 +117,8 @@ export default class NNW extends Component {
           });
         });
     });
+
+    this.setState({bias :myNNW.bias});
   }
 
   render() {
@@ -169,6 +173,10 @@ export default class NNW extends Component {
                     <Perceptron className="top" key={val} id={val}></Perceptron>
                   );
                 })}
+                
+                  {index != this.state.layerSizes.length - 1 ? 
+                  <div className="aaaaa" style={{backgroundColor: "yellow"}}> {Math.floor(this.state.bias[index + 1] * 1000) / 1000} </div> : null
+              }
               </div>
             );
           })}
