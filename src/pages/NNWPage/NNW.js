@@ -8,7 +8,8 @@ import Button from "@material-ui/core/Button";
 import model from "./model";
 import TrainSet from "./TrainSet";
 import LineTo from "react-lineto";
-
+import Modal from "react-bootstrap/Modal";
+import {Container} from 'react-bootstrap'
 var myNNW = null;
 var ts = null;
 export default class NNW extends Component {
@@ -23,15 +24,22 @@ export default class NNW extends Component {
       linePos: [],
       weights: [],
       bias: [],
+      biasLinePos: [],
       showWeights: true,
       graph: "",
       data: "none",
+      trainModel: false,
+      epochs: 0,
     };
+  }
+
+  setEpochs = (v) => {
+    this.setState({epochs: v});
   }
 
   inputLayerSizes = (v) => {
     const layerSize = v.split(",");
-    this.setState({ layerSizes: layerSize , nnwLength: layerSize.length});
+    this.setState({ layerSizes: layerSize, nnwLength: layerSize.length });
     myNNW = new model(layerSize);
     ts = new TrainSet(layerSize[0], layerSize[layerSize.length - 1]);
     //alert(myNNW.NETWORK_LAYER_SIZES);
@@ -89,14 +97,24 @@ export default class NNW extends Component {
       for (var k = 0; k < this.state.layers[i].length; k++) {
         for (var j = 0; j < this.state.layers[i + 1].length; j++) {
           var tmp = this.state.layers;
-          var tmpA = [];
+          var tmpA = [],
+            tmpB = [];
           var widdddd = $("#" + tmp[i][k]).width() / 2,
             hiehhhh = $("#" + tmp[i][k]).height() / 2;
-          tmpA.push($("#" + tmp[i][k]).position().left + widdddd);
-          tmpA.push($("#" + tmp[i][k]).position().top + hiehhhh);
-          tmpA.push($("#" + tmp[i + 1][j]).position().left + widdddd);
-          tmpA.push($("#" + tmp[i + 1][j]).position().top + hiehhhh);
+          tmpA.push($("#" + tmp[i][k]).offset().left + widdddd);
+          tmpA.push($("#" + tmp[i][k]).offset().top + hiehhhh);
+          tmpA.push($("#" + tmp[i + 1][j]).offset().left + widdddd);
+          tmpA.push($("#" + tmp[i + 1][j]).offset().top + hiehhhh);
           this.state.linePos.push(tmpA);
+
+          // here adds the bias line
+          if ($(`#bias${i}`).length === 0)
+            continue;
+          tmpB.push($(`#bias${i}`).offset().left + widdddd);
+          tmpB.push($(`#bias${i}`).offset().top + hiehhhh);
+          tmpB.push($("#" + tmp[i + 1][j]).offset().left + widdddd);
+          tmpB.push($("#" + tmp[i + 1][j]).offset().top + hiehhhh);
+          this.state.biasLinePos.push(tmpB);
         }
       }
     }
@@ -107,7 +125,8 @@ export default class NNW extends Component {
       return;
     }
     //alert(ts.data);
-    myNNW.train1(ts, 1000, 1);
+    console.log(this.state.epochs); 
+    myNNW.train1(ts, this.state.epochs, 1);
     //alert(myNNW.weights);
     myNNW.weights.forEach((val, i) => {
       if (i !== 0)
@@ -118,7 +137,17 @@ export default class NNW extends Component {
         });
     });
 
-    this.setState({bias :myNNW.bias});
+    myNNW.bias.forEach((val, i) => {
+      if (i !== 0)
+        val.forEach((cc) => {
+          this.state.bias.push(cc);
+        });
+    });
+
+    console.log(" --------------------");
+    console.log(myNNW.bias);
+    console.log(" --------------------");
+    console.log(myNNW.weights);
   }
 
   render() {
@@ -129,6 +158,7 @@ export default class NNW extends Component {
             className="dialog"
             modalName="Create A Neural Network"
             LayerSizes={this.inputLayerSizes}
+            ccccccccc={this.setEpochs}
           ></FormDialog>
           <Button
             variant="outlined"
@@ -148,6 +178,7 @@ export default class NNW extends Component {
             className="dialog"
             modalName="Input Data"
             LayerSizes={this.splitTrainingData}
+            ccccccccc={this.setEpochs}
           ></FormDialog>
           <Button
             className="change-display"
@@ -169,14 +200,25 @@ export default class NNW extends Component {
             return (
               <div key={index + "layer"} className="aaaa">
                 {this.makeLayers(val, index).map((val) => {
-                  return (
-                    <Perceptron className="top" key={val} id={val}></Perceptron>
-                  );
+                  if (index != this.state.layerSizes.length)
+                    return (
+                      <Perceptron
+                        className="top"
+                        key={val}
+                        id={val}
+                      ></Perceptron>
+                    );
                 })}
-                
-                  {index != this.state.layerSizes.length - 1 ? 
-                  <div className="aaaaa" style={{backgroundColor: "yellow"}}> {Math.floor(this.state.bias[index + 1] * 1000) / 1000} </div> : null
-              }
+
+                {index != this.state.layerSizes.length - 1 ? (
+                  <div
+                    className="aaaaa"
+                    id={`bias${index}`}
+                    style={{ backgroundColor: "yellow" }}
+                  >
+                    {" "}
+                  </div>
+                ) : null}
               </div>
             );
           })}
@@ -199,11 +241,11 @@ export default class NNW extends Component {
             color: "white",
             justifyContent: "left",
             paddingLeft: "30px",
-            flexDirection: 'row',
-            alignItems:'flex-start',
+            flexDirection: "row",
+            alignItems: "flex-start",
           }}
         >
-          <div style={{ textAlign: "left", alignItems: "left" , width:'50%'}}>
+          <div style={{ textAlign: "left", alignItems: "left", width: "50%" }}>
             <h1>Neural Network Format:</h1>
             {this.state.layerSizes.map((val, index) => {
               return (
@@ -220,22 +262,28 @@ export default class NNW extends Component {
             ) : (
               this.state.inputdata.map((val, index) => {
                 return (
-                 <pre>
-                  <text>
-                    {`          ${
-                      index + 1
-                    }. Input: ${val.toString()}  Output: ${this.state.outputData[
-                      index
-                    ].toString()}`}
-                    <br />
-                  </text>
+                  <pre>
+                    <text>
+                      {`          ${
+                        index + 1
+                      }. Input: ${val.toString()}  Output: ${this.state.outputData[
+                        index
+                      ].toString()}`}
+                      <br />
+                    </text>
                   </pre>
                 );
               })
             )}
           </div>
 
-          <div style={{ textAlign: "top-left", alignItems: "top-left" ,  verticalAlign: 'top'}}>
+          <div
+            style={{
+              textAlign: "top-left",
+              alignItems: "top-left",
+              verticalAlign: "top",
+            }}
+          >
             <h1>Weights: </h1>
             {this.state.weights.toString()}
             <h1>Bias:</h1>
@@ -253,6 +301,22 @@ export default class NNW extends Component {
                   x2={val[2]}
                   y2={val[3]}
                   stroke="#bb86fc"
+                  strokeWidth="2"
+                  style={{ transform: "transLateY(2%)", position: "absolute" }}
+                />
+              );
+            })}
+
+            {this.state.biasLinePos.map((val) => {
+              //alert('aaaaaa');
+              return (
+                <line
+                  position="absolute"
+                  x1={parseInt(val[0])}
+                  y1={val[1]}
+                  x2={val[2]}
+                  y2={val[3]}
+                  stroke="yellow"
                   strokeWidth="2"
                   style={{ transform: "transLateY(2%)", position: "absolute" }}
                 />
@@ -278,6 +342,37 @@ export default class NNW extends Component {
                     style={{
                       position: "absolute",
                       color: "red",
+                      left: curX,
+                      top: curY,
+                      textAlign: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <b>{cc.toFixed(4)}</b>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+
+          {this.state.showWeights ? (
+            <div id="aaaaaaa" position="absolute" height="100%" width="100%">
+              {this.state.bias.map((cc, index) => {
+                var val = this.state.biasLinePos[index];
+
+                //alert('aaaaaa');
+                var curX = (parseInt(val[2]) - val[0]) / 3 + val[0];
+
+                var k = (val[3] - val[1]) / (val[2] - val[0]);
+                var b = val[1] - k * val[0];
+                var curY = curX * k + b;
+
+                // alert(curY);
+                return (
+                  <div
+                    style={{
+                      position: "absolute",
+                      color: "orange",
                       left: curX,
                       top: curY,
                       textAlign: "center",
