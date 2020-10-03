@@ -4,12 +4,13 @@
   margin-top: 10vh;
   height: 80vh;
   width: 70%;
-  margin-left: 4%;
   justify-content: space-around;
   background-color: #21192b;
   border-radius: 20px;
   border: solid 2px #bb86fc;
   align-items: center;
+  left: 6%;
+  position: absolute;
 }
 .aaaa {
   background-color: #332940;
@@ -42,6 +43,7 @@
   height: 80vh;
   border-radius: 20px;
   width: 18%;
+  top: 10%;
 }
 
 .lineDiv {
@@ -71,4 +73,14 @@
   color: black;
   border-radius: 20px;
   width: 80%;
+}
+
+#trainingModel {
+  width: 20%;
+  height: 20%;
+  position: absolute;
+  transform: translateX(-50%) translateY(-50%);
+  left: 50%;
+  top: 50%;
+  background-color:white;
 }
